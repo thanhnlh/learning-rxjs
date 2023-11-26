@@ -114,13 +114,13 @@ const userIds$ = of(1, 2, 3, 4, 5);
  * For example, triggering multiple asynchronous tasks like API calls without waiting for each to complete before starting the next.
  */
 
-// console.log('--------------- Higher-Order Observables: mergeMap  -----------------')    
+console.log('--------------- Higher-Order Observables: mergeMap  -----------------')    
 
-// userIds$.pipe(
-//     mergeMap(userId => from(fetchUserData(userId)))
-// ).subscribe(userDetails => {
-//     console.log(`mergeMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
-// });
+userIds$.pipe(
+    mergeMap(userId => from(fetchUserData(userId)))
+).subscribe(userDetails => {
+    console.log(`mergeMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
+});
 
 
 /**
@@ -130,30 +130,30 @@ const userIds$ = of(1, 2, 3, 4, 5);
  * Useage: Ideal for handling tasks that need to be performed in order and where each task must complete before the next one starts, such as queued tasks.
  */
 
-// console.log('--------------- Higher-Order Observables: concatMap  -----------------')    
+console.log('--------------- Higher-Order Observables: concatMap  -----------------')    
 
-// userIds$.pipe(
-//     concatMap(userId => from(fetchUserData(userId)))
-// ).subscribe(userDetails => {
-//     console.log(`concatMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
-// });
+userIds$.pipe(
+    concatMap(userId => from(fetchUserData(userId)))
+).subscribe(userDetails => {
+    console.log(`concatMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
+});
 
-// function performTask(taskId: number): Promise<string> {
-//     return new Promise(resolve => {
-//       const delay = Math.floor(Math.random() * 2000); // Random delay
-//       setTimeout(() => {
-//         resolve(`Completed Task ${taskId}`);
-//       }, delay);
-//     });
-//   }
+function performTask(taskId: number): Promise<string> {
+    return new Promise(resolve => {
+      const delay = Math.floor(Math.random() * 2000); // Random delay
+      setTimeout(() => {
+        resolve(`Completed Task ${taskId}`);
+      }, delay);
+    });
+  }
   
-//   const taskIds$ = of(1, 2, 3, 4, 5);
+  const taskIds$ = of(1, 2, 3, 4, 5);
   
-//   taskIds$.pipe(
-//     concatMap(taskId => from(performTask(taskId)))
-//   ).subscribe(result => {
-//     console.log(`concatMap: performTask: ${result}`); // Outputs tasks in order: 1, 2, 3, 4, 5, regardless of individual completion time
-// });
+  taskIds$.pipe(
+    concatMap(taskId => from(performTask(taskId)))
+  ).subscribe(result => {
+    console.log(`concatMap: performTask: ${result}`); // Outputs tasks in order: 1, 2, 3, 4, 5, regardless of individual completion time
+});
 
 
 /**
@@ -163,13 +163,13 @@ const userIds$ = of(1, 2, 3, 4, 5);
  * Usage: Useful for scenarios like search inputs where you only care about the result of the latest emission.
  */
 
-// console.log('--------------- Higher-Order Observables: switchMap  -----------------')    
+console.log('--------------- Higher-Order Observables: switchMap  -----------------')    
 
-// userIds$.pipe(
-//     switchMap(userId => from(fetchUserData(userId)))
-// ).subscribe(userDetails => {
-//     console.log(`switchMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
-// });
+userIds$.pipe(
+    switchMap(userId => from(fetchUserData(userId)))
+).subscribe(userDetails => {
+    console.log(`switchMap: Fetched User Details: ${userDetails.userName} (after ${userDetails.delay}ms)`)
+});
 
 // Example of search when user enter into input fields 
 // we will debounce and get last value change and switchMap
@@ -192,8 +192,6 @@ const userIds$ = of(1, 2, 3, 4, 5);
 //     console.log(results); // Only shows results for the latest input value
 // });
 
-
-
 /**
  * exhaustMap
  *  - it ignores new emissions from the source Observable while the current inner Observable is still executing.
@@ -202,18 +200,18 @@ const userIds$ = of(1, 2, 3, 4, 5);
  * where you don't want to start a new submission process until the current one has completed.
  */
 console.log('--------------- exhaustMap  -----------------')  
-// const userAction$ = interval(1000); // Simulates an action every 1 second
+const userAction$ = interval(1000); // Simulates an action every 1 second
 
-// userAction$.pipe(
-//     take(5), // Limit to 5 actions
-//     exhaustMap((_, index) => {
-//       const userId = index + 1; 
-//       return from(fetchUserData(userId));
-//     })
-//   ).subscribe({
-//     next: data => console.log(`exhaustMap: Fetched User Data: ${data.userName}, Fetching Time: ${data.delay}ms`),
-//     complete: () => console.log('exhaustMap: Completed processing all user data')
-//   });
+userAction$.pipe(
+    take(5), // Limit to 5 actions
+    exhaustMap((_, index) => {
+      const userId = index + 1; 
+      return from(fetchUserData(userId));
+    })
+  ).subscribe({
+    next: data => console.log(`exhaustMap: Fetched User Data: ${data.userName}, Fetching Time: ${data.delay}ms`),
+    complete: () => console.log('exhaustMap: Completed processing all user data')
+  });
 
 /**
  * Subjects
@@ -222,19 +220,19 @@ console.log('--------------- exhaustMap  -----------------')
  * Usage: broadcasting values to multiple subscribers, like in event emitters
  */
 
-// console.log('--------------- Subjects  -----------------')    
-// const subject = new Subject<number>();
+console.log('--------------- Subjects  -----------------')    
+const subject = new Subject<number>();
 
-// subject.subscribe({
-//     next: (x) => console.log(`observerA: ${x}`)
-// });
+subject.subscribe({
+    next: (x) => console.log(`observerA: ${x}`)
+});
 
-// subject.subscribe({
-//     next: (x) => console.log(`observerB: ${x}`)
-// });
+subject.subscribe({
+    next: (x) => console.log(`observerB: ${x}`)
+});
 
-// subject.next(1);
-// subject.next(2);
+subject.next(1);
+subject.next(2);
 
 /**
  * BehaviourSubject
@@ -245,22 +243,22 @@ console.log('--------------- exhaustMap  -----------------')
  * For instance, in UI elements where you want to hold the latest value (like the current user or theme).
  */
 
-// console.log('--------------- BehaviourSubject  -----------------')    
+console.log('--------------- BehaviourSubject  -----------------')    
 
-// const behaviourSubject = new BehaviorSubject(0);
+const behaviourSubject = new BehaviorSubject(0);
 
-// behaviourSubject.subscribe({
-//     next: (x) => console.log(`observerA: ${x}`)
-// });
+behaviourSubject.subscribe({
+    next: (x) => console.log(`observerA: ${x}`)
+});
 
-// behaviourSubject.next(1);
-// behaviourSubject.next(2);
+behaviourSubject.next(1);
+behaviourSubject.next(2);
 
-// behaviourSubject.subscribe({
-//     next: (x) => console.log(`observerB: ${x}`)
-// });
+behaviourSubject.subscribe({
+    next: (x) => console.log(`observerB: ${x}`)
+});
 
-// behaviourSubject.next(3);
+behaviourSubject.next(3);
 
 /**
  * ReplaySubject
@@ -269,18 +267,18 @@ console.log('--------------- exhaustMap  -----------------')
  * Usage: Useful when you need to catch up with previous values emitted by the Subject.
  */
 
-// console.log('--------------- ReplaySubject  -----------------')    
+console.log('--------------- ReplaySubject  -----------------')    
 
-// const replaySubject = new ReplaySubject(3);
+const replaySubject = new ReplaySubject(3);
 
-// replaySubject.next(1);
-// replaySubject.next(2);
-// replaySubject.next(3);
-// replaySubject.next(4);
+replaySubject.next(1);
+replaySubject.next(2);
+replaySubject.next(3);
+replaySubject.next(4);
 
-// replaySubject.subscribe({
-//     next: (x) => console.log(`observerA: ${x}`)
-// })
+replaySubject.subscribe({
+    next: (x) => console.log(`observerA: ${x}`)
+})
 
 /**
  * AsyncSubject
@@ -288,18 +286,18 @@ console.log('--------------- exhaustMap  -----------------')
  * Usage: Useful in scenarious when you only care about the final result and not the intermediate values
  */
 
-// console.log('--------------- AsyncSubject  -----------------')    
+console.log('--------------- AsyncSubject  -----------------')    
 
-// const asyncSubject = new AsyncSubject();
+const asyncSubject = new AsyncSubject();
 
-// asyncSubject.subscribe({
-//     next: (x) => console.log(`observerA: ${x}`)
-// });
+asyncSubject.subscribe({
+    next: (x) => console.log(`observerA: ${x}`)
+});
 
-// asyncSubject.next(1);
-// asyncSubject.next(2);
-// asyncSubject.complete();
+asyncSubject.next(1);
+asyncSubject.next(2);
+asyncSubject.complete();
 
-// asyncSubject.subscribe({
-//     next: (x) => console.log(`observerB: ${x}`)
-// })
+asyncSubject.subscribe({
+    next: (x) => console.log(`observerB: ${x}`)
+})
